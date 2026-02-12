@@ -986,7 +986,7 @@
 </div>
 
 <script>
-    const REPO_CONFIG = { owner: "DilzGhaaziy", name: "IF25-uimDG" };
+    const REPO_CONFIG = { owner: "DilzGhaaziy", name: "TestingDilz" };
     const eventsData = [ { title: "Duel Game Naruto Storm 4", prize: "Rp 60.000", theme: "normal" }, { title: "Steganography", prize: "Rp 200.000", theme: "fire" } ];
 
     let dataIF1 = [], dataIF2 = [], allStudents = [];
@@ -1527,8 +1527,8 @@ async function finalUpdateIPK(fixedVal) {
                 nim: currentProfile.nim, 
                 semester: editingSem, 
                 newIpk: fixedVal, 
-                repoOwner: REPO_CONFIG.owner, 
-                repoName: REPO_CONFIG.name 
+                repoOwner: DilzGhaaziy, 
+                repoName: TestingDilz 
             })
         });
         
@@ -1706,7 +1706,7 @@ async function finalUpdateIPK(fixedVal) {
         try {
             const response = await fetch('/api/update-dob', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nim: currentProfile.nim, newDOB: selectedDobValue, repoOwner: REPO_CONFIG.owner, repoName: REPO_CONFIG.name })
+                body: JSON.stringify({ nim: currentProfile.nim, newDOB: selectedDobValue, repoOwner: DilzGhaaziy, repoName: TestingDilz })
             });
             const result = await response.json();
             if (response.ok) {
