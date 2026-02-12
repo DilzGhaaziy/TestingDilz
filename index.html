@@ -14,24 +14,53 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-	/* --- KONAMI CODE EASTER EGG STYLES --- */
+/* --- KONAMI CODE EASTER EGG STYLES (UPDATED: BASS BEAT MODE) --- */
+
+/* Saat aktif, body jadi warna-warni pelangi */
 body.konami-active {
-    animation: rainbow-bg 2s infinite;
+    animation: rainbow-bg 1s infinite linear; /* Dipercepat biar ngebut */
 }
 
 @keyframes rainbow-bg {
-    0% { filter: hue-rotate(0deg); }
-    100% { filter: hue-rotate(360deg); }
+    0% { filter: hue-rotate(0deg) saturate(2); } /* Saturate biar warna makin gonjreng */
+    100% { filter: hue-rotate(360deg) saturate(2); }
 }
 
+/* GANTI BAGIAN INI: 
+   Dulu 'barrelRoll' (muter), sekarang 'partyBeat' (ngebass)
+*/
 .card.konami-spin {
-    animation: barrelRoll 2s infinite linear !important;
+    /* Durasi 0.5s artinya sekitar 120 BPM (ketukan per menit), standar lagu jedag-jedug */
+    /* cubic-bezier membuat efek 'tendangan' bass lebih terasa */
+    animation: partyBeat 0.5s infinite cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
     border: 3px solid #fff;
+    box-shadow: 0 0 20px rgba(255,255,255,0.8); /* Tambah glow saat party */
 }
 
-@keyframes barrelRoll {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+/*
+   HAPUS keyframes barrelRoll yang lama.
+   GANTI dengan keyframes partyBeat ini.
+*/
+@keyframes partyBeat {
+    0% {
+        transform: scale(1) rotate(0deg); /* Ukuran normal */
+    }
+    15% {
+        /* 'DUM!' - Membesar cepat dan sedikit miring */
+        transform: scale(1.15) rotate(3deg); 
+        border-color: #ff0055; /* Warna border ikut berubah */
+        box-shadow: 0 0 30px #ff0055;
+    }
+    30% {
+        /* 'TESS..' - Kembali mengecil sedikit di bawah ukuran normal (recoil effect) */
+        transform: scale(0.95) rotate(-2deg);
+        border-color: #00ffea;
+    }
+    50%, 100% {
+        /* Istirahat sampai ketukan berikutnya */
+        transform: scale(1) rotate(0deg);
+        border-color: #fff;
+    }
 }
 
 .konami-avatar-img {
