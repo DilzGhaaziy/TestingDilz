@@ -14,6 +14,86 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+	/* --- KONAMI CODE EASTER EGG STYLES --- */
+body.konami-active {
+    animation: rainbow-bg 2s infinite;
+}
+
+@keyframes rainbow-bg {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+.card.konami-spin {
+    animation: barrelRoll 2s infinite linear !important;
+    border: 3px solid #fff;
+}
+
+@keyframes barrelRoll {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.konami-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+	
+	/* --- STYLE UNTUK FITUR CLUE --- */
+.clue-btn-trigger {
+    background: #8e44ad; /* Warna Ungu Misterius */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+    box-shadow: 0 4px 10px rgba(142, 68, 173, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.clue-btn-trigger:hover { transform: scale(1.05); background: #9b59b6; }
+
+.clue-scroll-box {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.clue-item {
+    background: rgba(0,0,0,0.05);
+    border-left: 4px solid #f1c40f;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-size: 13px;
+    color: var(--text-color);
+    line-height: 1.5;
+}
+
+.clue-number {
+    font-weight: 800;
+    color: #d35400;
+    display: block;
+    margin-bottom: 3px;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+/* Pastikan tombol di footer modal rapi di HP */
+@media (max-width: 400px) {
+    .btn-conf-primary, .btn-conf-close {
+        padding: 10px 15px; /* Sedikit lebih kecil agar muat */
+        font-size: 13px;
+    }
+}
+	
 /* --- 1. SETTING DASAR & WARNA --- */
         :root {
             --bg-gradient: transparent; 
@@ -69,36 +149,102 @@
         
         body.dark-mode #bg-light-mode { display: none; }
 
-        /* OPTIMASI GLOW: Beban GPU turun 80% */
+/* =========================================
+   BACKGROUND SYSTEMS (Light Mode - Visual Restored)
+   ========================================= */
+        .global-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -9999;
+            overflow: hidden;
+            pointer-events: none;
+            /* Hardware Acceleration untuk pembungkus utama */
+            transform: translateZ(0); 
+        }
+
+        #bg-light-mode {
+            background-color: #000510;
+            background-image: linear-gradient(135deg, #001233 0%, #003060 100%);
+            display: block;
+        }
+        
+        body.dark-mode #bg-light-mode { display: none; }
+
+        /* --- 1. CAHAYA AURORA (GLOW) --- */
         .glow {
             position: absolute; 
             border-radius: 50%;
+            /* Kita kembalikan BLUR, tapi set 60px agar lebih ringan dari 80px */
+            filter: blur(60px); 
+            mix-blend-mode: screen; /* Kunci visual agar warna menyatu cantik */
             will-change: transform; 
-            pointer-events: none; 
-            transform: translateZ(0); 
+            opacity: 0.6;
+            transform: translateZ(0); /* Paksa render di GPU */
         }
+
         .glow-1 {
             width: 80vw; height: 80vh; 
-            background: radial-gradient(circle, rgba(0, 255, 242, 0.25) 0%, rgba(0, 162, 255, 0) 60%);
+            background: linear-gradient(45deg, #00fff2, #00a2ff);
             bottom: -20%; left: -20%; 
-            animation: drift 10s infinite alternate ease-in-out;
+            animation: drift 12s infinite alternate ease-in-out;
         }
+
         .glow-2 {
             width: 90vw; height: 70vh; 
-            background: radial-gradient(circle, rgba(0, 97, 255, 0.25) 0%, rgba(0, 30, 255, 0) 60%);
+            background: linear-gradient(120deg, #0061ff, #001eff);
             top: -10%; right: -10%; 
+            opacity: 0.5;
             animation: drift 15s infinite alternate-reverse ease-in-out;
         }
+
         .glow-3 {
             width: 100vw; height: 40vh;
-            background: radial-gradient(ellipse at center, rgba(0, 255, 234, 0.2) 0%, transparent 60%);
-            top: 30%; left: 10%; transform: rotate(-45deg) scaleY(0.5);
+            background: radial-gradient(ellipse at center, rgba(0, 255, 234, 0.4), transparent 70%);
+            top: 30%; left: 10%; 
+            transform: rotate(-45deg) scaleY(0.5);
+            filter: blur(50px); 
+            opacity: 0.4;
         }
+
+        /* --- 2. BINTANG BERGERAK (STARS) --- */
+        .stars-bg, .stars-sm-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            will-change: transform;
+            z-index: -1; /* Pastikan bintang ada di atas background warna, tapi di bawah konten */
+        }
+
+        /* Bintang Ukuran Sedang */
+        .stars-bg {
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)), 
+                radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0,0,0,0)), 
+                radial-gradient(2px 2px at 50px 160px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 130px 80px, #ffffff, rgba(0,0,0,0));
+            background-size: 200px 200px; 
+            opacity: 0.8;
+            animation: moveUpSmall 50s linear infinite; 
+        }
+
+        /* Bintang Ukuran Kecil (Lapis Kedua - Parallax Effect) */
+        .stars-sm-bg {
+            background-image: 
+                radial-gradient(1px 1px at 10px 10px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 150px 150px, #fff, rgba(0,0,0,0));
+            background-size: 100px 100px;
+            opacity: 0.5;
+            animation: moveUpSmall 80s linear infinite; /* Gerak lebih pelan */
+        }
+
+        /* --- ANIMASI --- */
         @keyframes drift {
             0% { transform: translate3d(0, 0, 0) rotate(20deg) skewX(-20deg); }
             100% { transform: translate3d(20px, -20px, 0) rotate(25deg) skewX(-15deg); }
         }
-        @keyframes moveUpSmall { from { transform: translateY(0); } to { transform: translateY(-250px); } }
+
+        @keyframes moveUpSmall { 
+            from { transform: translateY(0); } 
+            to { transform: translateY(-1000px); } 
+        }
 
         /* --- DARK MODE BACKGROUND --- */
         #bg-dark-mode {
@@ -753,8 +899,16 @@
 <div class="event-modal" id="eventModal">
     <div class="modal-box">
         <h2 style="color: var(--text-color);"><i class="fas fa-calendar-alt"></i> Event Aktif</h2>
+        
         <div class="event-list" id="eventListContainer"></div>
-        <button class="btn-conf-close" style="margin-top:20px;" onclick="closeEventModal()">Tutup</button>
+        
+        <div style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
+            <button class="btn-conf-primary" style="background: #8e44ad;" onclick="openClueSelection()">
+                <i class="fas fa-search"></i> Clue
+            </button>
+            
+            <button class="btn-conf-close" onclick="closeEventModal()">Tutup</button>
+        </div>
     </div>
 </div>
 
@@ -926,6 +1080,36 @@
         <div style="display:flex; justify-content:center; gap:10px;">
             <button class="btn-conf-close" onclick="closeSurrenderModal()">Gak Jadi</button>
             <button class="btn-giveup" onclick="confirmSurrender()">Iya Saya Menyerah</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="clueSelectionModal">
+    <div class="modal-box">
+        <h2 style="color: var(--text-color); margin-bottom: 20px;">Pilih Event</h2>
+        <p style="font-size: 13px; color: #7f8c8d; margin-bottom: 20px;">Mau intip clue untuk event yang mana?</p>
+        
+        <button class="event-item fire-theme" onclick="openStegoClueList()" style="width:100%; margin-bottom:10px;">
+            <div class="event-title" style="text-align:center;">🕵️ Steganography</div>
+        </button>
+
+        <button class="btn-conf-close" onclick="closeClueSelection()">Kembali</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="clueListModal">
+    <div class="modal-box" style="text-align: left;">
+        <h2 style="color: var(--text-color); text-align: center; margin-bottom: 10px;">
+            <i class="fas fa-lightbulb" style="color:#f1c40f;"></i> Petunjuk
+        </h2>
+        <p style="font-size: 12px; color: #7f8c8d; text-align: center; margin-bottom: 20px;">
+            Gunakan petunjuk ini dengan bijak!
+        </p>
+        
+        <div id="clue-container-list" class="clue-scroll-box"></div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn-conf-close" onclick="backToClueSelection()">Kembali</button>
         </div>
     </div>
 </div>
@@ -1611,17 +1795,17 @@
     const targetDate = new Date("February 15, 2026 15:00:00").getTime();
     let stegoInterval;
 
-    function openEventModal() {
+        function openEventModal() {
         const modal = document.getElementById('eventModal');
         const list = document.getElementById('eventListContainer');
         list.innerHTML = "";
         
+        // Loop Event (TETAP ADA)
         eventsData.forEach(ev => {
             const item = document.createElement('div');
             
             if (ev.theme === 'fire') { 
                 item.className = 'event-item fire-theme'; 
-                
                 let surrenderCount = globalStats.stego_surrender_count;
 
                 item.innerHTML = `
@@ -1647,15 +1831,18 @@
             }
             
             if (ev.title === "Steganography") { 
-                item.onclick = (e) => {
-                    openStegoModal(); 
-                }; 
+                item.onclick = (e) => { openStegoModal(); }; 
             } else { 
                 item.onclick = openChallengeModal; 
             }
 
             list.appendChild(item);
         });
+
+        // --- BAGIAN YANG DIHAPUS ---
+        // (Hapus kode: const clueBtn = document.createElement('button')...)
+        // (Hapus kode: list.appendChild(clueBtn)...)
+        // ---------------------------
         
         modal.classList.add('active');
     }
@@ -2035,6 +2222,111 @@
     function closeStegoSuccess() { document.getElementById('stegoSuccessModal').classList.remove('active'); }
     function setMobileList() { document.getElementById('cardGrid').classList.remove('mobile-grid-active'); document.getElementById('btnList').classList.add('active'); document.getElementById('btnGrid').classList.remove('active'); localStorage.setItem('mobileLayout', 'list'); }
     function setMobileGrid() { document.getElementById('cardGrid').classList.add('mobile-grid-active'); document.getElementById('btnGrid').classList.add('active'); document.getElementById('btnList').classList.remove('active'); localStorage.setItem('mobileLayout', 'grid'); }
+	
+	// --- FITUR EASTER EGG (KONAMI CODE) ---
+    // Sequence: Up, Up, Down, Down, Left, Right, Left, Right, B, A
+    const konamiCode = [
+        "ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", 
+        "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", 
+        "b", "a"
+    ];
+    let konamiIndex = 0;
+
+    document.addEventListener('keydown', (e) => {
+        // Cek apakah tombol yang ditekan sesuai urutan
+        if (e.key.toLowerCase() === konamiCode[konamiIndex].toLowerCase() || e.key === konamiCode[konamiIndex]) {
+            konamiIndex++;
+            
+            // Jika urutan lengkap
+            if (konamiIndex === konamiCode.length) {
+                activateKonamiMode();
+                konamiIndex = 0; // Reset
+            }
+        } else {
+            konamiIndex = 0; // Salah tombol, ulang dari awal
+        }
+    });
+
+    function activateKonamiMode() {
+        alert("🎉 KONAMI CODE ACTIVATED! MODUS PARTY DIMULAI! 🎉");
+
+        // 1. Ubah Body jadi Rainbow
+        document.body.classList.add('konami-active');
+
+        // 2. Putar Lagu Party (Ganti lagu saat ini)
+        // Lagu contoh: Jedag Jedug atau Meme Song
+        // Saya pakai link mp3 lucu (Running in the 90s atau sejenisnya)
+        const funnySong = "https://od.lk/s/NjhfMTYyNzYyNDIwXw/Alur%20Cerita%20FB%20CUT.mp3"; // Menggunakan lagu S_FUNNY yg sudah ada
+        
+        bgmAudio.src = funnySong;
+        bgmAudio.volume = 1.0;
+        bgmAudio.loop = true;
+        bgmAudio.play();
+        updateNPUI("MODUS PARTY AKTIF 🤣");
+
+        // 3. Ubah Semua Kartu & Avatar
+        const cards = document.querySelectorAll('.card');
+        const funnyGif = "https://media.tenor.com/NBexh7vX1rAAAAAi/slap-hand.gif"; // Bisa ganti GIF kucing
+
+        cards.forEach(card => {
+            // Tambah efek putar
+            card.classList.add('konami-spin');
+            
+            // Ganti Avatar jadi GIF
+            const avatar = card.querySelector('.avatar');
+            if (avatar) {
+                avatar.innerHTML = `<img src="https://media.tenor.com/Eazcnx5O-bgAAAAM/dudu-dudu-cute.gif" class="konami-avatar-img">`;
+                avatar.style.background = "transparent";
+                avatar.style.boxShadow = "none";
+            }
+        });
+
+        // 4. Ubah Judul
+        document.querySelector('h1').innerText = "KELAS INFORMATIKA PARTY!!";
+    }
+	
+// --- KONFIGURASI CLUE (ISI KATA-KATANYA DI SINI) ---
+    const STEGO_CLUES = [
+        "Clue 1: Coba perhatikan baik-baik gambar tersebut, apakah ada yang aneh dengan warnanya?",
+        "Clue 2: Jangan hanya melihat dengan mata telanjang, gunakan 'alat bantu' digital.",
+        "Clue 3: Ingat pelajaran tentang Hex Editor? Mungkin header filenya berubah.",
+        "Clue 4: Password untuk ekstrak file adalah Tanggal Lahir seseorang di kelas ini."
+    ];
+
+    // --- LOGIKA CLUE SYSTEM ---
+
+    function openClueSelection() {
+        // Tutup modal event utama, buka modal pemilihan clue
+        document.getElementById('eventModal').classList.remove('active');
+        document.getElementById('clueSelectionModal').classList.add('active');
+    }
+
+    function closeClueSelection() {
+        // Kembali ke modal event utama
+        document.getElementById('clueSelectionModal').classList.remove('active');
+        document.getElementById('eventModal').classList.add('active');
+    }
+
+    function openStegoClueList() {
+        const container = document.getElementById('clue-container-list');
+        container.innerHTML = ""; // Bersihkan isi lama
+
+        // Render Clue dari Array
+        STEGO_CLUES.forEach((text, index) => {
+            const div = document.createElement('div');
+            div.className = 'clue-item';
+            div.innerHTML = `<span class="clue-number">Petunjuk #${index + 1}</span>${text}`;
+            container.appendChild(div);
+        });
+
+        document.getElementById('clueSelectionModal').classList.remove('active');
+        document.getElementById('clueListModal').classList.add('active');
+    }
+
+    function backToClueSelection() {
+        document.getElementById('clueListModal').classList.remove('active');
+        document.getElementById('clueSelectionModal').classList.add('active');
+    }
 </script>
 </body>
 </html>
