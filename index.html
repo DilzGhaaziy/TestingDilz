@@ -2,6 +2,9 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -563,7 +566,7 @@
         .event-item.fire-theme::after {
             content: ''; position: absolute; top: 3px; left: 3px; right: 3px; bottom: 3px;
             background-color: #000; 
-            background-image: url('https://media1.tenor.com/m/PEDzvMlrdi0AAAAC/fire.gif');
+            background-image: url('https://media1.tenor.com/m/3Dv1dt0VcxUAAAAC/fire.gif');
             background-repeat: no-repeat; background-position: center center; background-size: 100% 100%;
             border-radius: 8px; z-index: -1; 
         }
@@ -826,6 +829,11 @@
     <button class="fixed-element pos-theme" id="themeToggle" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
     <a href="http://www.youtube.com/@DilzGhaaziy" target="_blank" class="fixed-element pos-right"><i class="fab fa-youtube"></i><span>Dilz Ghaaziy</span></a>
 
+    <div class="class-selector-box">
+        <button class="cls-btn active" id="btn-cls-if1" onclick="loadClassData('IF1')">IF 1</button>
+        <button class="cls-btn" id="btn-cls-if2" onclick="loadClassData('IF2')">IF 2</button>
+    </div>
+
     <div class="container">
         <header>
             <h1>Daftar Mahasiswa</h1>
@@ -1060,10 +1068,113 @@
 </div>
 
 <script>
+/* --- CLASS SELECTOR TOGGLE (Posisi Kanan Bawah Youtube) --- */
+        .class-selector-box {
+            position: fixed; 
+            top: 70px; 
+            right: 20px; 
+            z-index: 999;
+            background: var(--fixed-bg);
+            padding: 5px;
+            border-radius: 30px;
+            display: flex;
+            gap: 5px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .class-selector-box:hover { transform: scale(1.02); }
+
+        .cls-btn {
+            border: none;
+            background: transparent;
+            color: var(--fixed-text);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        .cls-btn:hover { opacity: 1; background: rgba(0,0,0,0.05); }
+
+        .cls-btn.active {
+            background: #3498db;
+            color: white;
+            opacity: 1;
+            box-shadow: 0 2px 10px rgba(52, 152, 219, 0.4);
+        }
+
+        /* Responsif HP: Sesuaikan posisi agar sejajar dengan Event Box di kiri */
+        @media (max-width: 600px) {
+            .class-selector-box {
+                top: 60px; 
+                right: 10px;
+                padding: 4px;
+            }
+            .cls-btn {
+                padding: 5px 12px;
+                font-size: 11px;
+            }
+        }
+
+     // --- KONFIGURASI VERSI WEB ---
+    // PENTING: Setiap kali kamu update codingan di GitHub, 
+    // GANTI ANGKA INI (Misal jadi "1.1", "1.2", dst) agar browser pengguna otomatis refresh.
+    const APP_VERSION = "1.0"; 
+
+    // --- FITUR AUTO-UPDATE SCRIPT ---
+    (async function checkAppVersion() {
+        console.log("Mengecek pembaruan script...");
+        try {
+            // 1. Ambil file index.html ini sendiri dari server (bypass cache dengan ?t=waktu)
+            const response = await fetch(window.location.href + '?t=' + new Date().getTime(), {
+                cache: "no-store"
+            });
+            
+            if (!response.ok) return;
+
+            // 2. Baca isi text file codingan dari server
+            const text = await response.text();
+
+            // 3. Cari baris "const APP_VERSION" di file server menggunakan Regex
+            const match = text.match(/const\s+APP_VERSION\s*=\s*"([^"]+)"/);
+            
+            if (match && match[1]) {
+                const serverVersion = match[1];
+                
+                // 4. Bandingkan versi Server vs Versi Browser saat ini
+                if (serverVersion !== APP_VERSION) {
+                    console.log(`Versi Baru Ditemukan! Server: ${serverVersion}, Lokal: ${APP_VERSION}. Merefresh...`);
+                    
+                    // Bersihkan cache browser untuk halaman ini
+                    if ('caches' in window) {
+                        const keys = await caches.keys();
+                        await Promise.all(keys.map(key => caches.delete(key)));
+                    }
+                    
+                    // Force Reload halaman
+                    window.location.reload(true);
+                } else {
+                    console.log("Script sudah versi terbaru.");
+                }
+            }
+        } catch (error) {
+            console.log("Gagal mengecek versi:", error);
+        }
+    })();
+	
     const REPO_CONFIG = { owner: "DilzGhaaziy", name: "TestingDilz" };
     const eventsData = [ { title: "Duel Game Naruto Storm 4", prize: "Rp 60.000", theme: "normal" }, { title: "Steganography", prize: "Rp 200.000", theme: "fire" } ];
 
     let dataIF1 = [], dataIF2 = [], allStudents = [];
+	let globalStats = { stego_surrender_count: 0 };
 
     // Gunakan DOMContentLoaded agar Modal muncul INSTAN
     document.addEventListener('DOMContentLoaded', () => {
@@ -1085,16 +1196,25 @@
         meteorLoop();
     });
 
-    async function fetchStudentData() {
+        async function fetchStudentData() {
         try {
+            // 1. Ambil Data Mahasiswa
             const response = await fetch('students.json?t=' + new Date().getTime());
-            if (!response.ok) throw new Error("Gagal mengambil data");
+            if (!response.ok) throw new Error("Gagal mengambil data mahasiswa");
             const data = await response.json();
             dataIF1 = data.IF1;
             dataIF2 = data.IF2;
             allStudents = [ ...dataIF1.map(s => ({...s, class:'IF 1'})), ...dataIF2.map(s => ({...s, class:'IF 2'})) ];
+
+            // 2. Ambil Data Statistik (Surrender Count) - TAMBAHAN BARU
+            const statsResponse = await fetch('stats.json?t=' + new Date().getTime());
+            if (statsResponse.ok) {
+                const stats = await statsResponse.json();
+                globalStats.stego_surrender_count = stats.stego_surrender_count || 0;
+            }
+
         } catch (error) {
-            console.error("❌ Error loading student data:", error);
+            console.error("❌ Error loading data:", error);
         }
     }
 
@@ -1373,22 +1493,42 @@
         osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.05);
     }
 
-    function loadClassData(type) {
+        function loadClassData(type) {
         if (!userInteracted) {
             userInteracted = true;
             if(bgmAudio.paused) { tryPlayDefaultRadio(); }
         }
+        
         const grid = document.getElementById('cardGrid');
         grid.innerHTML = "";
+        
+        // Setup Variabel Kelas
         currentClassData = (type === 'IF1') ? dataIF1 : dataIF2;
         currentClassLabel = (type === 'IF1') ? "IF 1" : "IF 2";
         document.getElementById('class-name').innerText = currentClassLabel;
         
+        // --- TAMBAHAN BARU: Update Tampilan Tombol Selector ---
+        const btn1 = document.getElementById('btn-cls-if1');
+        const btn2 = document.getElementById('btn-cls-if2');
+        
+        // Cek jika elemen tombol sudah ada di HTML (Mencegah error saat load awal modal)
+        if (btn1 && btn2) {
+            if (type === 'IF1') {
+                btn1.classList.add('active');
+                btn2.classList.remove('active');
+            } else {
+                btn1.classList.remove('active');
+                btn2.classList.add('active');
+            }
+        }
+        // -----------------------------------------------------
+
         const fragment = document.createDocumentFragment();
         currentClassData.forEach((s, index) => {
             const card = document.createElement('div'); 
             let cardClass = 'card'; let roleBadge = '';
             
+            // ... (Kode logika badge role biarkan tetap sama seperti sebelumnya) ...
             if (s.isOwner) { cardClass += ' owner-card'; roleBadge = `<div class="owner-badge"><i class="fas fa-crown"></i> Owner</div>`; } 
             else if (s.role === "Ketua IF 1" || s.role === "Ketua IF 2") { cardClass += ' ketua-card'; roleBadge = `<div class="ketua-badge"><i class="fas fa-user-tie"></i> ${s.role}</div>`; }
             else if (s.role === "Wakil IF2") { cardClass += ' wakil-if2-card'; roleBadge = `<div class="wakil-if2-badge"><i class="fas fa-star"></i> Wakil</div>`; }
@@ -1399,6 +1539,7 @@
                 if (s.name.includes("Leni")) { cardClass += ' pj-leni-card'; roleBadge = `<div class="pj-badge pj-leni-badge"><i class="fas fa-book"></i> ${s.role}</div>`; } 
                 else if (s.name.includes("Nirwanda")) { cardClass += ' pj-nirwanda-card'; roleBadge = `<div class="pj-badge pj-nirwanda-badge"><i class="fas fa-book"></i> ${s.role}</div>`; }
             }
+            // ... (Akhir logika badge) ...
             
             card.className = cardClass;
             card.dataset.index = index;
@@ -1407,7 +1548,10 @@
         });
         
         grid.appendChild(fragment); 
-        document.getElementById('selectionModal').classList.remove('active');
+        
+        // Tutup modal awal jika masih terbuka
+        const selectionModal = document.getElementById('selectionModal');
+        if (selectionModal) selectionModal.classList.remove('active');
     }
 
     // --- OPTIMASI MOUSEMOVE (THROTTLING & CEK MOUSE) ---
@@ -1644,8 +1788,7 @@ async function finalUpdateIPK(fixedVal) {
                 item.className = 'event-item fire-theme'; 
                 
                 // LOGIKA KHUSUS TAMPILAN STEGANOGRAPHY
-                // Ambil jumlah yang nyerah dari LocalStorage
-                let surrenderCount = localStorage.getItem('stego_surrender_count') || 0;
+                let surrenderCount = globalStats.stego_surrender_count;
 
                 item.innerHTML = `
                 <div class="event-item-content">
@@ -1733,20 +1876,52 @@ async function finalUpdateIPK(fixedVal) {
         document.getElementById('stegoModal').classList.add('active'); // Balik lagi ke modal password
     }
 
-    function confirmSurrender() {
-        // 1. Tambah Counter di LocalStorage
-        let count = parseInt(localStorage.getItem('stego_surrender_count') || 0);
-        count++;
-        localStorage.setItem('stego_surrender_count', count);
-
-        // 2. Tutup Semua Modal
-        document.getElementById('surrenderModal').classList.remove('active');
+async function confirmSurrender() {
+        const btn = document.querySelector('.btn-giveup');
+        const originalText = btn.innerText;
         
-        // 3. Refresh Event Modal untuk update angka counter secara visual
-        // Kita tutup dulu sebentar lalu buka lagi (atau langsung refresh kontennya)
-        openEventModal(); 
+        // Ubah tombol jadi loading agar user tidak spam klik
+        btn.innerText = "Menyimpan kekalahan..."; 
+        btn.disabled = true;
 
-        alert("Yahhh cupu... 🏳️ Jumlah yang nyerah bertambah!");
+        try {
+            // Panggil API Backend
+            const response = await fetch('/api/update-surrender', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    repoOwner: REPO_CONFIG.owner, 
+                    repoName: REPO_CONFIG.name 
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // Update variabel global dengan data terbaru dari server
+                globalStats.stego_surrender_count = result.newCount;
+
+                // Tutup modal surrender
+                document.getElementById('surrenderModal').classList.remove('active');
+                
+                // Refresh tampilan Event Modal agar angkanya berubah
+                openEventModal(); 
+
+                alert(`Yahhh cupu... 🏳️ Total ${result.newCount} orang nyerah!`);
+            } else {
+                throw new Error(result.message);
+            }
+
+        } catch (error) {
+            alert("Gagal menyimpan data ke server: " + error.message);
+            // Kembalikan ke modal sebelumnya jika gagal
+            document.getElementById('surrenderModal').classList.remove('active');
+            document.getElementById('stegoModal').classList.add('active');
+        } finally {
+            // Kembalikan tombol seperti semula
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
     }
 
 // --- LOGIKA CUSTOM DATE PICKER (BARU) ---
