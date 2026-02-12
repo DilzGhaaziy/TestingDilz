@@ -792,10 +792,70 @@ body.konami-active {
         .cls-btn:hover { opacity: 1; background: rgba(0,0,0,0.05); }
         .cls-btn.active { background: #3498db; color: white; opacity: 1; box-shadow: 0 2px 10px rgba(52, 152, 219, 0.4); }
         @media (max-width: 600px) { .class-selector-box { top: 60px; right: 10px; padding: 4px; } .cls-btn { padding: 5px 12px; font-size: 11px; } }
+		
+		/* --- MODERN TOAST NOTIFICATIONS --- */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10005; /* Harus paling atas melebihi modal */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none; /* Agar area kosong tidak memblokir klik */
+    align-items: center;
+}
+
+.toast-box {
+    background: var(--fixed-bg);
+    color: var(--fixed-text);
+    padding: 12px 24px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-left: 5px solid #3498db; /* Default Biru */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    animation: slideInDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    max-width: 90vw;
+    pointer-events: auto; /* Boksnya tetap bisa diklik/disentuh */
+    border-right: 1px solid rgba(255,255,255,0.2);
+    border-top: 1px solid rgba(255,255,255,0.2);
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.toast-box.success { border-left-color: #2ecc71; }
+.toast-box.error { border-left-color: #e74c3c; }
+.toast-box.warning { border-left-color: #f1c40f; }
+.toast-box.party { border-left-color: #9b59b6; animation: slideInDown 0.4s forwards, partyToast 1s infinite; }
+
+.toast-icon { font-size: 18px; }
+
+@keyframes slideInDown {
+    from { opacity: 0; transform: translateY(-30px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fadeOutUp {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(-20px) scale(0.9); }
+}
+
+@keyframes partyToast {
+    0% { border-color: #ff0055; box-shadow: 0 0 15px rgba(255, 0, 85, 0.5); }
+    50% { border-color: #00ffea; box-shadow: 0 0 15px rgba(0, 255, 234, 0.5); }
+    100% { border-color: #ff0055; box-shadow: 0 0 15px rgba(255, 0, 85, 0.5); }
+}
     </style>
 </head>
 <body>
 
+<div id="toast-container" class="toast-container"></div>
 <div class="global-bg" id="bg-light-mode">
     <div class="glow glow-1"></div>
     <div class="glow glow-2"></div>
@@ -2355,6 +2415,33 @@ body.konami-active {
     function backToClueSelection() {
         document.getElementById('clueListModal').classList.remove('active');
         document.getElementById('clueSelectionModal').classList.add('active');
+    }
+	
+	// --- FUNGSI NOTIFIKASI MODERN ---
+    function showNotification(message, type = 'info') {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `toast-box ${type}`;
+        
+        // Tentukan Icon berdasarkan tipe (Warna menyesuaikan CSS border)
+        let icon = '<i class="fas fa-info-circle toast-icon" style="color: #3498db;"></i>';
+        if (type === 'success') icon = '<i class="fas fa-check-circle toast-icon" style="color: #2ecc71;"></i>';
+        if (type === 'error') icon = '<i class="fas fa-exclamation-circle toast-icon" style="color: #e74c3c;"></i>';
+        if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle toast-icon" style="color: #f1c40f;"></i>';
+        if (type === 'party') icon = '🎉';
+
+        toast.innerHTML = `${icon} <span>${message}</span>`;
+        container.appendChild(toast);
+
+        // Hapus otomatis setelah 3.5 detik
+        setTimeout(() => {
+            toast.style.animation = 'fadeOutUp 0.3s ease forwards';
+            toast.addEventListener('animationend', () => {
+                toast.remove();
+            });
+        }, 3500);
     }
 </script>
 </body>
