@@ -14,115 +14,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-/* --- KONAMI CODE EASTER EGG STYLES (UPDATED: BASS BEAT MODE) --- */
-
-/* Saat aktif, body jadi warna-warni pelangi */
-body.konami-active {
-    animation: rainbow-bg 1s infinite linear; /* Dipercepat biar ngebut */
-}
-
-@keyframes rainbow-bg {
-    0% { filter: hue-rotate(0deg) saturate(2); } /* Saturate biar warna makin gonjreng */
-    100% { filter: hue-rotate(360deg) saturate(2); }
-}
-
-/* GANTI BAGIAN INI: 
-   Dulu 'barrelRoll' (muter), sekarang 'partyBeat' (ngebass)
-*/
-.card.konami-spin {
-    /* Durasi 0.5s artinya sekitar 120 BPM (ketukan per menit), standar lagu jedag-jedug */
-    /* cubic-bezier membuat efek 'tendangan' bass lebih terasa */
-    animation: partyBeat 0.5s infinite cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-    border: 3px solid #fff;
-    box-shadow: 0 0 20px rgba(255,255,255,0.8); /* Tambah glow saat party */
-}
-
-/*
-   HAPUS keyframes barrelRoll yang lama.
-   GANTI dengan keyframes partyBeat ini.
-*/
-@keyframes partyBeat {
-    0% {
-        transform: scale(1) rotate(0deg); /* Ukuran normal */
-    }
-    15% {
-        /* 'DUM!' - Membesar cepat dan sedikit miring */
-        transform: scale(1.15) rotate(3deg); 
-        border-color: #ff0055; /* Warna border ikut berubah */
-        box-shadow: 0 0 30px #ff0055;
-    }
-    30% {
-        /* 'TESS..' - Kembali mengecil sedikit di bawah ukuran normal (recoil effect) */
-        transform: scale(0.95) rotate(-2deg);
-        border-color: #00ffea;
-    }
-    50%, 100% {
-        /* Istirahat sampai ketukan berikutnya */
-        transform: scale(1) rotate(0deg);
-        border-color: #fff;
-    }
-}
-
-.konami-avatar-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
-	
-	/* --- STYLE UNTUK FITUR CLUE --- */
-.clue-btn-trigger {
-    background: #8e44ad; /* Warna Ungu Misterius */
-    color: white;
-    padding: 10px 20px;
-    border-radius: 20px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 15px;
-    box-shadow: 0 4px 10px rgba(142, 68, 173, 0.4);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: auto;
-    margin-right: auto;
-}
-.clue-btn-trigger:hover { transform: scale(1.05); background: #9b59b6; }
-
-.clue-scroll-box {
-    max-height: 300px;
-    overflow-y: auto;
-    padding-right: 5px;
-}
-
-.clue-item {
-    background: rgba(0,0,0,0.05);
-    border-left: 4px solid #f1c40f;
-    padding: 12px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    font-size: 13px;
-    color: var(--text-color);
-    line-height: 1.5;
-}
-
-.clue-number {
-    font-weight: 800;
-    color: #d35400;
-    display: block;
-    margin-bottom: 3px;
-    font-size: 11px;
-    text-transform: uppercase;
-}
-
-/* Pastikan tombol di footer modal rapi di HP */
-@media (max-width: 400px) {
-    .btn-conf-primary, .btn-conf-close {
-        padding: 10px 15px; /* Sedikit lebih kecil agar muat */
-        font-size: 13px;
-    }
-}
-	
 /* --- 1. SETTING DASAR & WARNA --- */
         :root {
             --bg-gradient: transparent; 
@@ -178,36 +69,15 @@ body.konami-active {
         
         body.dark-mode #bg-light-mode { display: none; }
 
-/* =========================================
-   BACKGROUND SYSTEMS (Light Mode - Visual Restored)
-   ========================================= */
-        .global-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -9999;
-            overflow: hidden;
-            pointer-events: none;
-            /* Hardware Acceleration untuk pembungkus utama */
-            transform: translateZ(0); 
-        }
-
-        #bg-light-mode {
-            background-color: #000510;
-            background-image: linear-gradient(135deg, #001233 0%, #003060 100%);
-            display: block;
-        }
-        
-        body.dark-mode #bg-light-mode { display: none; }
-
         /* --- 1. CAHAYA AURORA (GLOW) --- */
         .glow {
             position: absolute; 
             border-radius: 50%;
-            /* Kita kembalikan BLUR, tapi set 60px agar lebih ringan dari 80px */
             filter: blur(60px); 
-            mix-blend-mode: screen; /* Kunci visual agar warna menyatu cantik */
+            mix-blend-mode: screen; 
             will-change: transform; 
             opacity: 0.6;
-            transform: translateZ(0); /* Paksa render di GPU */
+            transform: translateZ(0); 
         }
 
         .glow-1 {
@@ -238,10 +108,9 @@ body.konami-active {
         .stars-bg, .stars-sm-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             will-change: transform;
-            z-index: -1; /* Pastikan bintang ada di atas background warna, tapi di bawah konten */
+            z-index: -1; 
         }
 
-        /* Bintang Ukuran Sedang */
         .stars-bg {
             background-image: 
                 radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)), 
@@ -254,17 +123,15 @@ body.konami-active {
             animation: moveUpSmall 50s linear infinite; 
         }
 
-        /* Bintang Ukuran Kecil (Lapis Kedua - Parallax Effect) */
         .stars-sm-bg {
             background-image: 
                 radial-gradient(1px 1px at 10px 10px, #fff, rgba(0,0,0,0)),
                 radial-gradient(1px 1px at 150px 150px, #fff, rgba(0,0,0,0));
             background-size: 100px 100px;
             opacity: 0.5;
-            animation: moveUpSmall 80s linear infinite; /* Gerak lebih pelan */
+            animation: moveUpSmall 80s linear infinite; 
         }
 
-        /* --- ANIMASI --- */
         @keyframes drift {
             0% { transform: translate3d(0, 0, 0) rotate(20deg) skewX(-20deg); }
             100% { transform: translate3d(20px, -20px, 0) rotate(25deg) skewX(-15deg); }
@@ -792,70 +659,104 @@ body.konami-active {
         .cls-btn:hover { opacity: 1; background: rgba(0,0,0,0.05); }
         .cls-btn.active { background: #3498db; color: white; opacity: 1; box-shadow: 0 2px 10px rgba(52, 152, 219, 0.4); }
         @media (max-width: 600px) { .class-selector-box { top: 60px; right: 10px; padding: 4px; } .cls-btn { padding: 5px 12px; font-size: 11px; } }
-		
-		/* --- MODERN TOAST NOTIFICATIONS --- */
-.toast-container {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10005; /* Harus paling atas melebihi modal */
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    pointer-events: none; /* Agar area kosong tidak memblokir klik */
-    align-items: center;
-}
 
-.toast-box {
-    background: var(--fixed-bg);
-    color: var(--fixed-text);
-    padding: 12px 24px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    font-size: 13px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-left: 5px solid #3498db; /* Default Biru */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    animation: slideInDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    max-width: 90vw;
-    pointer-events: auto; /* Boksnya tetap bisa diklik/disentuh */
-    border-right: 1px solid rgba(255,255,255,0.2);
-    border-top: 1px solid rgba(255,255,255,0.2);
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-}
+        /* --- KONAMI CODE EASTER EGG STYLES (UPDATED: BASS BEAT MODE) --- */
+        body.konami-active {
+            animation: rainbow-bg 1s infinite linear; 
+        }
+        @keyframes rainbow-bg {
+            0% { filter: hue-rotate(0deg) saturate(2); } 
+            100% { filter: hue-rotate(360deg) saturate(2); }
+        }
+        .card.konami-spin {
+            animation: partyBeat 0.5s infinite cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            border: 3px solid #fff;
+            box-shadow: 0 0 20px rgba(255,255,255,0.8); 
+        }
+        @keyframes partyBeat {
+            0% { transform: scale(1) rotate(0deg); }
+            15% { transform: scale(1.15) rotate(3deg); border-color: #ff0055; box-shadow: 0 0 30px #ff0055; }
+            30% { transform: scale(0.95) rotate(-2deg); border-color: #00ffea; }
+            50%, 100% { transform: scale(1) rotate(0deg); border-color: #fff; }
+        }
+        .konami-avatar-img {
+            width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+        }
+        
+        /* --- STYLE UNTUK FITUR CLUE --- */
+        .clue-btn-trigger {
+            background: #8e44ad; color: white; padding: 10px 20px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 10px rgba(142, 68, 173, 0.4); display: flex; align-items: center; gap: 8px; margin-left: auto; margin-right: auto;
+        }
+        .clue-btn-trigger:hover { transform: scale(1.05); background: #9b59b6; }
+        .clue-scroll-box { max-height: 300px; overflow-y: auto; padding-right: 5px; }
+        .clue-item { background: rgba(0,0,0,0.05); border-left: 4px solid #f1c40f; padding: 12px; margin-bottom: 10px; border-radius: 5px; font-size: 13px; color: var(--text-color); line-height: 1.5; }
+        .clue-number { font-weight: 800; color: #d35400; display: block; margin-bottom: 3px; font-size: 11px; text-transform: uppercase; }
+        @media (max-width: 400px) { .btn-conf-primary, .btn-conf-close { padding: 10px 15px; font-size: 13px; } }
 
-.toast-box.success { border-left-color: #2ecc71; }
-.toast-box.error { border-left-color: #e74c3c; }
-.toast-box.warning { border-left-color: #f1c40f; }
-.toast-box.party { border-left-color: #9b59b6; animation: slideInDown 0.4s forwards, partyToast 1s infinite; }
+        /* --- MODERN TOAST NOTIFICATIONS --- */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10005; /* Harus paling atas melebihi modal */
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none; /* Agar area kosong tidak memblokir klik */
+            align-items: center;
+        }
 
-.toast-icon { font-size: 18px; }
+        .toast-box {
+            background: var(--fixed-bg);
+            color: var(--fixed-text);
+            padding: 12px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 5px solid #3498db; /* Default Biru */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            animation: slideInDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            max-width: 90vw;
+            pointer-events: auto; /* Boksnya tetap bisa diklik/disentuh */
+            border-right: 1px solid rgba(255,255,255,0.2);
+            border-top: 1px solid rgba(255,255,255,0.2);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
 
-@keyframes slideInDown {
-    from { opacity: 0; transform: translateY(-30px) scale(0.9); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-}
+        .toast-box.success { border-left-color: #2ecc71; }
+        .toast-box.error { border-left-color: #e74c3c; }
+        .toast-box.warning { border-left-color: #f1c40f; }
+        .toast-box.party { border-left-color: #9b59b6; animation: slideInDown 0.4s forwards, partyToast 1s infinite; }
 
-@keyframes fadeOutUp {
-    from { opacity: 1; transform: translateY(0) scale(1); }
-    to { opacity: 0; transform: translateY(-20px) scale(0.9); }
-}
+        .toast-icon { font-size: 18px; }
 
-@keyframes partyToast {
-    0% { border-color: #ff0055; box-shadow: 0 0 15px rgba(255, 0, 85, 0.5); }
-    50% { border-color: #00ffea; box-shadow: 0 0 15px rgba(0, 255, 234, 0.5); }
-    100% { border-color: #ff0055; box-shadow: 0 0 15px rgba(255, 0, 85, 0.5); }
-}
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-30px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes fadeOutUp {
+            from { opacity: 1; transform: translateY(0) scale(1); }
+            to { opacity: 0; transform: translateY(-20px) scale(0.9); }
+        }
+
+        @keyframes partyToast {
+            0% { border-color: #ff0055; box-shadow: 0 0 15px rgba(255, 0, 85, 0.5); }
+            50% { border-color: #00ffea; box-shadow: 0 0 15px rgba(0, 255, 234, 0.5); }
+            100% { border-color: #ff0055; box-shadow: 0 0 15px rgba(255, 0, 85, 0.5); }
+        }
     </style>
 </head>
 <body>
 
 <div id="toast-container" class="toast-container"></div>
+
 <div class="global-bg" id="bg-light-mode">
     <div class="glow glow-1"></div>
     <div class="glow glow-2"></div>
@@ -1163,7 +1064,7 @@ body.konami-active {
         <h2 style="color: var(--text-color); margin-bottom: 5px;">Gak Sanggup? Hehe</h2>
         <div class="flag-emoji">🏳️</div>
         <p style="color: var(--text-color); margin-bottom: 20px; font-size: 13px;">
-            Yakin mau nyerah? Kesempatan dapet 200rb hilang loh.
+            Yakin mau nyerah? Kesempatan dapet 200rb hilang lho.
         </p>
         
         <div style="display:flex; justify-content:center; gap:10px;">
@@ -1205,41 +1106,26 @@ body.konami-active {
 
 <script>
      // --- KONFIGURASI VERSI WEB ---
-    // PENTING: Setiap kali kamu update codingan di GitHub, 
-    // GANTI ANGKA INI (Misal jadi "1.1", "1.2", dst) agar browser pengguna otomatis refresh.
     const APP_VERSION = "1.0"; 
 
     // --- FITUR AUTO-UPDATE SCRIPT ---
     (async function checkAppVersion() {
         console.log("Mengecek pembaruan script...");
         try {
-            // 1. Ambil file index.html ini sendiri dari server (bypass cache dengan ?t=waktu)
             const response = await fetch(window.location.href + '?t=' + new Date().getTime(), {
                 cache: "no-store"
             });
-            
             if (!response.ok) return;
-
-            // 2. Baca isi text file codingan dari server
             const text = await response.text();
-
-            // 3. Cari baris "const APP_VERSION" di file server menggunakan Regex
             const match = text.match(/const\s+APP_VERSION\s*=\s*"([^"]+)"/);
-            
             if (match && match[1]) {
                 const serverVersion = match[1];
-                
-                // 4. Bandingkan versi Server vs Versi Browser saat ini
                 if (serverVersion !== APP_VERSION) {
                     console.log(`Versi Baru Ditemukan! Server: ${serverVersion}, Lokal: ${APP_VERSION}. Merefresh...`);
-                    
-                    // Bersihkan cache browser untuk halaman ini
                     if ('caches' in window) {
                         const keys = await caches.keys();
                         await Promise.all(keys.map(key => caches.delete(key)));
                     }
-                    
-                    // Force Reload halaman
                     window.location.reload(true);
                 } else {
                     console.log("Script sudah versi terbaru.");
@@ -1250,6 +1136,33 @@ body.konami-active {
         }
     })();
     
+    // --- FUNGSI NOTIFIKASI MODERN ---
+    function showNotification(message, type = 'info') {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `toast-box ${type}`;
+        
+        // Tentukan Icon berdasarkan tipe (Warna menyesuaikan CSS border)
+        let icon = '<i class="fas fa-info-circle toast-icon" style="color: #3498db;"></i>';
+        if (type === 'success') icon = '<i class="fas fa-check-circle toast-icon" style="color: #2ecc71;"></i>';
+        if (type === 'error') icon = '<i class="fas fa-exclamation-circle toast-icon" style="color: #e74c3c;"></i>';
+        if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle toast-icon" style="color: #f1c40f;"></i>';
+        if (type === 'party') icon = '🎉';
+
+        toast.innerHTML = `${icon} <span>${message}</span>`;
+        container.appendChild(toast);
+
+        // Hapus otomatis setelah 3.5 detik
+        setTimeout(() => {
+            toast.style.animation = 'fadeOutUp 0.3s ease forwards';
+            toast.addEventListener('animationend', () => {
+                toast.remove();
+            });
+        }, 3500);
+    }
+
     const REPO_CONFIG = { owner: "DilzGhaaziy", name: "TestingDilz" };
     const eventsData = [ { title: "Duel Game Naruto Storm 4", prize: "Rp 60.000", theme: "normal" }, { title: "Steganography", prize: "Rp 200.000", theme: "fire" } ];
 
@@ -1690,7 +1603,7 @@ body.konami-active {
         const dobIcon = document.getElementById('dob-edit-icon');
         if (hasEdited === "true") {
             dobIcon.classList.add('faded');
-            dobIcon.onclick = function() { alert("Tanggal Lahir di Profil ini sudah pernah diubah"); };
+            dobIcon.onclick = function() { showNotification("Tanggal Lahir di Profil ini sudah pernah diubah", "warning"); };
         } else {
             dobIcon.classList.remove('faded');
             dobIcon.onclick = initEditDOB;
@@ -1835,7 +1748,7 @@ body.konami-active {
         const input = document.getElementById('modern-ipk-input');
         const val = parseFloat(input.value);
         if (isNaN(val) || val < 1.00 || val > 4.00) { 
-            alert("Nilai tidak valid! Masukkan angka antara 1.00 sampai 4.00"); 
+            showNotification("Nilai tidak valid! Masukkan angka antara 1.00 sampai 4.00", "warning"); 
             return; 
         }
         const fixedVal = val.toFixed(2);
@@ -1865,14 +1778,14 @@ body.konami-active {
                 const index = targetData.findIndex(s => s.nim === currentProfile.nim);
                 if (index !== -1) targetData[index][`ipk${editingSem}`] = fixedVal;
 
-                alert(`IPK Semester ${editingSem} berhasil disimpan permanen!`);
+                showNotification(`IPK Semester ${editingSem} berhasil disimpan permanen!`, "success");
                 closeIpkInputModal(); 
                 openIPKModal();
             } else { 
                 throw new Error(result.message); 
             }
         } catch (error) { 
-            alert("Error: " + error.message); 
+            showNotification("Error: " + error.message, "error"); 
             input.value = ""; 
         } finally {
             input.disabled = false;
@@ -2003,12 +1916,12 @@ body.konami-active {
                 globalStats.stego_surrender_count = result.newCount;
                 document.getElementById('surrenderModal').classList.remove('active');
                 openEventModal();
-                alert(`Yahhh cupu... 🏳️ Total ${result.newCount} orang nyerah!`);
+                showNotification(`Yahhh cupu... 🏳️ Total ${result.newCount} orang nyerah!`, "warning");
             } else {
                 throw new Error(result.message);
             }
         } catch (error) {
-            alert("Gagal memproses penyerahan: " + error.message);
+            showNotification("Gagal memproses penyerahan: " + error.message, "error");
             document.getElementById('surrenderModal').classList.remove('active');
             document.getElementById('stegoModal').classList.add('active'); 
         } finally {
@@ -2025,7 +1938,7 @@ body.konami-active {
 
     function initEditDOB() {
         if (localStorage.getItem(`dob_edited_${currentProfile.nim}`) === "true") { 
-            alert("Tanggal Lahir di Profil ini sudah pernah diubah"); 
+            showNotification("Tanggal Lahir di Profil ini sudah pernah diubah", "warning"); 
             return; 
         }
         
@@ -2132,7 +2045,7 @@ body.konami-active {
     function formatIndoDate(dateString) { const date = new Date(dateString); return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }); }
     function confirmDateSelection() {
         const inputVal = document.getElementById('newDobInput').value;
-        if (!inputVal) { alert("Pilih tanggal terlebih dahulu!"); return; }
+        if (!inputVal) { showNotification("Pilih tanggal terlebih dahulu!", "warning"); return; }
         selectedDobValue = formatIndoDate(inputVal);
         document.getElementById('conf-dob-display').innerText = selectedDobValue;
         document.getElementById('datePickerModal').classList.remove('active'); document.getElementById('dateConfirmModal').classList.add('active');
@@ -2142,7 +2055,7 @@ body.konami-active {
     function submitVerification() {
         const input = document.getElementById('nim-verify-input').value;
         const correctSuffix = currentProfile.nim.slice(-2);
-        if (input === correctSuffix) { finalUpdateDOB(); } else { alert("Verifikasi Gagal! 2 Digit terakhir NIM salah."); }
+        if (input === correctSuffix) { finalUpdateDOB(); } else { showNotification("Verifikasi Gagal! 2 Digit terakhir NIM salah.", "error"); }
     }
     async function finalUpdateDOB() {
         const dobElement = document.getElementById('p-dob');
@@ -2156,16 +2069,16 @@ body.konami-active {
             });
             const result = await response.json();
             if (response.ok) {
-                alert("Berhasil disimpan! Data di GitHub akan terupdate.");
+                showNotification("Berhasil disimpan! Data di GitHub akan terupdate.", "success");
                 localStorage.setItem(`dob_edited_${currentProfile.nim}`, "true");
                 const dobIcon = document.getElementById('dob-edit-icon');
-                dobIcon.classList.add('faded'); dobIcon.onclick = function() { alert("Tanggal Lahir di Profil ini sudah pernah diubah"); };
+                dobIcon.classList.add('faded'); dobIcon.onclick = function() { showNotification("Tanggal Lahir di Profil ini sudah pernah diubah", "warning"); };
                 dobElement.innerText = selectedDobValue; currentProfile.dob = selectedDobValue;
                 const targetData = (currentClassLabel === "IF 1") ? dataIF1 : dataIF2;
                 const index = targetData.findIndex(s => s.nim === currentProfile.nim);
                 if (index !== -1) targetData[index].dob = selectedDobValue;
             } else { throw new Error(result.message || "Gagal menyimpan."); }
-        } catch (error) { alert("Error: " + error.message); dobElement.innerText = originalText; }
+        } catch (error) { showNotification("Gagal menyimpan: " + error.message, "error"); dobElement.innerText = originalText; }
     }
 
     // Jodoh Logic
@@ -2255,7 +2168,8 @@ body.konami-active {
     function closeJodoh() { document.getElementById('jodohModal').classList.remove('active'); clearInterval(matchInterval); jodohAudio.pause(); jodohAudio.currentTime = 0; bgmAudio.play(); if(!isMuted) bgmAudio.volume = 0.2; }
 
     function copyNIM() { navigator.clipboard.writeText(document.getElementById('p-nim').innerText).then(() => { document.getElementById('copy-tooltip').classList.add('show'); setTimeout(() => document.getElementById('copy-tooltip').classList.remove('show'), 1500); }); }
-    
+    function setMobileList() { document.getElementById('cardGrid').classList.remove('mobile-grid-active'); document.getElementById('btnList').classList.add('active'); document.getElementById('btnGrid').classList.remove('active'); localStorage.setItem('mobileLayout', 'list'); }
+    function setMobileGrid() { document.getElementById('cardGrid').classList.add('mobile-grid-active'); document.getElementById('btnGrid').classList.add('active'); document.getElementById('btnList').classList.remove('active'); localStorage.setItem('mobileLayout', 'grid'); }
     function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode')?'dark':'light'); document.querySelector('#themeToggle i').className = document.body.classList.contains('dark-mode') ? 'fas fa-sun' : 'fas fa-moon'; if(document.body.classList.contains('dark-mode')) { meteorLoop(); } }
     function getInitials(n) { let p=n.split(" "); return p.length>1?(p[0][0]+p[1][0]).toUpperCase():p[0].substring(0,2).toUpperCase(); }
     
@@ -2301,7 +2215,7 @@ body.konami-active {
         if (userHash === SECRET_HASH_CODE) {
             document.getElementById('stegoModal').classList.remove('active'); document.getElementById('stegoSuccessModal').classList.add('active');
         } else {
-            alert("Jawaban Salah! Coba cari petunjuk lagi.");
+            showNotification("Jawaban Salah! Coba cari petunjuk lagi.", "error");
             document.getElementById('stegoAnswerInput').style.border = "2px solid red";
             setTimeout(() => { document.getElementById('stegoAnswerInput').style.border = "none"; }, 1000);
         }
@@ -2309,10 +2223,8 @@ body.konami-active {
     function openStegoImage() { document.getElementById('stegoImageModal').classList.add('active'); }
     function closeStegoImage() { document.getElementById('stegoImageModal').classList.remove('active'); }
     function closeStegoSuccess() { document.getElementById('stegoSuccessModal').classList.remove('active'); }
-    function setMobileList() { document.getElementById('cardGrid').classList.remove('mobile-grid-active'); document.getElementById('btnList').classList.add('active'); document.getElementById('btnGrid').classList.remove('active'); localStorage.setItem('mobileLayout', 'list'); }
-    function setMobileGrid() { document.getElementById('cardGrid').classList.add('mobile-grid-active'); document.getElementById('btnGrid').classList.add('active'); document.getElementById('btnList').classList.remove('active'); localStorage.setItem('mobileLayout', 'grid'); }
-	
-	// --- FITUR EASTER EGG (KONAMI CODE) ---
+    
+    // --- FITUR EASTER EGG (KONAMI CODE) ---
     // Sequence: Up, Up, Down, Down, Left, Right, Left, Right, B, A
     const konamiCode = [
         "ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", 
@@ -2337,7 +2249,7 @@ body.konami-active {
     });
 
     function activateKonamiMode() {
-        alert("🎉 KONAMI CODE ACTIVATED! MODUS PARTY DIMULAI! 🎉");
+        showNotification("KONAMI CODE ACTIVATED! MODUS PARTY DIMULAI!", "party");
 
         // 1. Ubah Body jadi Rainbow
         document.body.classList.add('konami-active');
@@ -2373,7 +2285,7 @@ body.konami-active {
         // 4. Ubah Judul
         document.querySelector('h1').innerText = "KELAS INFORMATIKA PARTY!!";
     }
-	
+    
 // --- KONFIGURASI CLUE (ISI KATA-KATANYA DI SINI) ---
     const STEGO_CLUES = [
         "Clue 1: Coba perhatikan baik-baik gambar tersebut, apakah ada yang aneh dengan warnanya?",
@@ -2415,33 +2327,6 @@ body.konami-active {
     function backToClueSelection() {
         document.getElementById('clueListModal').classList.remove('active');
         document.getElementById('clueSelectionModal').classList.add('active');
-    }
-	
-	// --- FUNGSI NOTIFIKASI MODERN ---
-    function showNotification(message, type = 'info') {
-        const container = document.getElementById('toast-container');
-        if (!container) return;
-
-        const toast = document.createElement('div');
-        toast.className = `toast-box ${type}`;
-        
-        // Tentukan Icon berdasarkan tipe (Warna menyesuaikan CSS border)
-        let icon = '<i class="fas fa-info-circle toast-icon" style="color: #3498db;"></i>';
-        if (type === 'success') icon = '<i class="fas fa-check-circle toast-icon" style="color: #2ecc71;"></i>';
-        if (type === 'error') icon = '<i class="fas fa-exclamation-circle toast-icon" style="color: #e74c3c;"></i>';
-        if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle toast-icon" style="color: #f1c40f;"></i>';
-        if (type === 'party') icon = '🎉';
-
-        toast.innerHTML = `${icon} <span>${message}</span>`;
-        container.appendChild(toast);
-
-        // Hapus otomatis setelah 3.5 detik
-        setTimeout(() => {
-            toast.style.animation = 'fadeOutUp 0.3s ease forwards';
-            toast.addEventListener('animationend', () => {
-                toast.remove();
-            });
-        }, 3500);
     }
 </script>
 </body>
