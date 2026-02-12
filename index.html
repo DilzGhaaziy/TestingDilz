@@ -489,8 +489,37 @@
         .modal-box { background: var(--card-bg); padding: 40px; border-radius: 20px; text-align: center; max-width: 90%; width: 400px; transform: scale(0.9); transition: transform 0.3s; }
         .active .modal-box { transform: scale(1); }
 
-        /* IPK Modal Specific */
-        .ipk-content { background: var(--card-bg); width: 90%; max-width: 400px; border-radius: 20px; padding: 30px; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); transform: translateY(20px); transition: 0.3s; }
+/* --- PERBAIKAN CSS MODAL IPK --- */
+.ipk-modal {
+    /* Pastikan modal bisa discroll jika konten tinggi */
+    overflow-y: auto; 
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.ipk-content {
+    background: var(--card-bg); 
+    width: 90%; max-width: 400px; 
+    border-radius: 20px; padding: 30px; 
+    position: relative; 
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
+    border: 1px solid rgba(255,255,255,0.2); 
+    transform: translateY(20px); 
+    transition: 0.3s;
+    /* Tambahkan margin auto agar rapi saat discroll */
+    margin: auto; 
+}
+
+.close-ipk {
+    width: 100%; padding: 12px; 
+    background: #333; color: white; 
+    border: none; border-radius: 15px; 
+    cursor: pointer; font-weight: bold; transition: 0.2s;
+    /* Paksa tombol berada di layer paling atas */
+    position: relative;
+    z-index: 100; 
+}
+.close-ipk:hover { background: #555; }
         .ipk-modal.active .ipk-content { transform: translateY(0); }
         .ipk-header { text-align: center; margin-bottom: 20px; color: var(--text-color); }
         .semester-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; }
@@ -1838,6 +1867,56 @@ async function finalUpdateIPK(fixedVal) {
     function openStegoImage() { document.getElementById('stegoImageModal').classList.add('active'); }
     function closeStegoImage() { document.getElementById('stegoImageModal').classList.remove('active'); }
     function closeStegoSuccess() { document.getElementById('stegoSuccessModal').classList.remove('active'); }
+	
+	// --- FUNGSI FIX TOMBOL TUTUP IPK ---
+    
+    // 1. Fungsi Tutup Modal (Pastikan ini ada di Global Scope)
+    function closeIPKModal() { 
+        console.log("Tombol Tutup Diklik"); // Debugging
+        document.getElementById('ipkModal').classList.remove('active'); 
+    }
+
+    // 2. Update Fungsi Open IPK Modal (Opsional: Memaksa Event Listener)
+    function openIPKModal() {
+        if (!currentProfile) return;
+        const modal = document.getElementById('ipkModal');
+        const listContainer = document.getElementById('semesterList');
+        document.getElementById('ipk-nama-mhs').innerText = currentProfile.name;
+        listContainer.innerHTML = "";
+        const today = new Date();
+
+        for (let i = 1; i <= 6; i++) {
+            let nilai = currentProfile[`ipk${i}`] ? currentProfile[`ipk${i}`] : "0.00";
+            // Cek properti legacy ipk1 jika belum ada di format baru
+            if (i === 1 && !currentProfile[`ipk${i}`] && currentProfile.ipk1) {
+                nilai = currentProfile.ipk1;
+            }
+            
+            let hasScore = parseFloat(nilai) > 0;
+            let editButtonHtml = ""; 
+            let canEdit = true;
+
+            if (hasScore) canEdit = false;
+            if (i > 1 && today < ipkSchedule[i]) canEdit = false;
+
+            if (canEdit) { 
+                editButtonHtml = `<button class="ipk-edit-btn" onclick="openIpkInputModal(${i})"><i class="fas fa-pencil-alt"></i></button>`; 
+            }
+            
+            const row = document.createElement('div');
+            row.className = `semester-row ${hasScore ? 'has-score' : ''}`;
+            row.innerHTML = `<span>Semester ${i}</span><span>${nilai}${editButtonHtml}</span>`;
+            listContainer.appendChild(row);
+        }
+        
+        // FIX TAMBAHAN: Pastikan tombol tutup memiliki event listener yang benar setiap kali modal dibuka
+        const closeBtn = modal.querySelector('.close-ipk');
+        if(closeBtn) {
+            closeBtn.onclick = closeIPKModal;
+        }
+
+        modal.classList.add('active');
+    }
 </script>
 </body>
 </html>
