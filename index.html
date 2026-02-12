@@ -1368,17 +1368,57 @@
 
     function openIpkInputModal(sem) { editingSem = sem; document.getElementById('modern-ipk-input').value = ""; document.getElementById('ipkModal').classList.remove('active'); document.getElementById('ipkInputModal').classList.add('active'); }
     function closeIpkInputModal() { document.getElementById('ipkInputModal').classList.remove('active'); document.getElementById('ipkModal').classList.add('active'); }
-    function confirmIPKInput() {
-        const input = document.getElementById('modern-ipk-input');
-        const val = parseFloat(input.value);
-        if (isNaN(val) || val < 1.00 || val > 4.00) { alert("Nilai tidak valid! Masukkan angka antara 1.00 sampai 4.00"); return; }
-        const fixedVal = val.toFixed(2);
-        localStorage.setItem(`ipk_val_sem${editingSem}_${currentProfile.nim}`, fixedVal);
-        localStorage.setItem(`ipk_edited_sem${editingSem}_${currentProfile.nim}`, "true");
-        alert(`IPK Semester ${editingSem} berhasil disimpan!`);
-        closeIpkInputModal(); openIPKModal();
+// Cari kode ini di index.html kamu
+function confirmIPKInput() {
+    const input = document.getElementById('modern-ipk-input');
+    const val = parseFloat(input.value);
+    if (isNaN(val) || val < 1.00 || val > 4.00) { alert("Nilai tidak valid! Masukkan angka antara 1.00 sampai 4.00"); return; }
+    const fixedVal = val.toFixed(2);
+    
+    // UBAH BAGIAN BAWAH INI MENJADI ASYNC FETCH
+    finalUpdateIPK(fixedVal); // Panggil fungsi baru
+}
+
+// Tambahkan fungsi baru ini di bawahnya
+async function finalUpdateIPK(fixedVal) {
+    const originalText = document.getElementById('modern-ipk-input').value;
+    document.getElementById('modern-ipk-input').value = "Menyimpan...";
+    document.getElementById('modern-ipk-input').disabled = true;
+
+    try {
+        const response = await fetch('/api/update-ipk', {
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                nim: currentProfile.nim, 
+                semester: editingSem, 
+                newIpk: fixedVal, 
+                repoOwner: REPO_CONFIG.owner, 
+                repoName: REPO_CONFIG.name 
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            // Jika berhasil disimpan ke GitHub, baru simpan ke LocalStorage sebagai penanda
+            localStorage.setItem(`ipk_val_sem${editingSem}_${currentProfile.nim}`, fixedVal);
+            localStorage.setItem(`ipk_edited_sem${editingSem}_${currentProfile.nim}`, "true");
+            
+            alert(`IPK Semester ${editingSem} berhasil disimpan ke Database!`);
+            closeIpkInputModal(); 
+            openIPKModal();
+        } else { 
+            throw new Error(result.message || "Gagal menyimpan."); 
+        }
+    } catch (error) { 
+        alert("Error: " + error.message); 
+    } finally {
+        // Kembalikan kondisi input seperti semula
+        document.getElementById('modern-ipk-input').value = originalText;
+        document.getElementById('modern-ipk-input').disabled = false;
     }
-    function closeIPKModal() { document.getElementById('ipkModal').classList.remove('active'); }
+}
 
     // --- VARIABEL COUNTDOWN & SURRENDER ---
     const targetDate = new Date("February 15, 2026 15:00:00").getTime();
