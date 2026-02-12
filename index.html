@@ -373,23 +373,83 @@
         .card h3 { font-size: 17px; font-weight: 600; color: var(--text-color); min-height: 50px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 5; }
         .nim-badge { background: var(--nim-bg); color: var(--nim-text); padding: 4px 12px; border-radius: 15px; font-size: 13px; font-weight: 500; position: relative; z-index: 5; }
 
-        /* Profil Big Card */
-        .big-profile-card {
-            background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 40px; border-radius: 30px; text-align: center; 
-            color: var(--text-color); width: 100%; max-width: 500px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.1); 
-            position: relative; overflow: hidden; animation: zoomIn 0.3s ease;
-        }
-        .info-label { color: var(--text-color); opacity: 0.7; text-align: left; }
-        .info-val { font-weight: 600; text-align: right; display: flex; align-items: center; gap: 8px; justify-content: flex-end; color: var(--fixed-text); }
-        .quote-box { color: var(--text-color); border-left: 4px solid #f1c40f; background: rgba(0,0,0,0.05); }
-        .big-profile-card #p-nim { color: var(--text-color); opacity: 0.8; }
+/* --- UPDATE CSS PROFIL BIG CARD (Agar sinkron dengan Grid) --- */
 
-        .big-profile-card.owner-profile { background: linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(5, 150, 105, 0.9) 100%); color: white !important; }
-        .big-profile-card.owner-profile .info-label, .big-profile-card.owner-profile .info-val, .big-profile-card.owner-profile #p-nim { color: #e0f2fe !important; }
-        .big-profile-card.ketua-profile { background: linear-gradient(135deg, rgba(41, 128, 185, 0.9) 0%, rgba(109, 213, 250, 0.9) 100%); color: white !important; }
-        .big-profile-card.ketua-profile .info-label, .big-profile-card.ketua-profile .info-val, .big-profile-card.ketua-profile #p-nim { color: #e0f2fe !important; }
+/* Style Dasar */
+.big-profile-card {
+    background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 40px; border-radius: 30px; text-align: center; 
+    color: var(--text-color); width: 100%; max-width: 500px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.1); 
+    position: relative; overflow: hidden; animation: zoomIn 0.3s ease;
+}
+
+/* 1. OWNER */
+.big-profile-card.owner-profile { 
+    background: linear-gradient(45deg, #059669, #10b981); 
+    color: white !important; border: 2px solid #ffd700;
+}
+
+/* 2. KETUA (IF1 & IF2) */
+.big-profile-card.ketua-profile { 
+    background: linear-gradient(135deg, #2980b9 0%, #6dd5fa 100%); 
+    color: white !important; 
+}
+
+/* 3. WAKIL 1 IF1 */
+.big-profile-card.wakil1-profile { 
+    background: linear-gradient(135deg, #6F2DA8 0%, #C54B8C 100%); 
+    color: white !important; 
+}
+
+/* 4. WAKIL 2 IF1 */
+.big-profile-card.wakil2-profile { 
+    background: linear-gradient(135deg, #f39c12 0%, #e74c3c 100%); 
+    color: white !important; 
+}
+
+/* 5. WAKIL IF2 */
+.big-profile-card.wakil-if2-profile { 
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
+    color: white !important; 
+}
+
+/* 6. KEAMANAN */
+.big-profile-card.keamanan-profile { 
+    background: linear-gradient(135deg, #FF2400 0%, #7C0A02 150%); 
+    color: white !important; 
+}
+
+/* 7. PJ LENI */
+.big-profile-card.pj-leni-profile { 
+    background: linear-gradient(135deg, #FC6C85 0%, #FF46A2 100%); 
+    color: #444 !important; /* Warna text gelap agar terbaca di pink terang */
+}
+/* Khusus PJ Leni, text label harus gelap */
+.big-profile-card.pj-leni-profile .info-label, 
+.big-profile-card.pj-leni-profile .info-val, 
+.big-profile-card.pj-leni-profile #p-nim { 
+    color: #444 !important; 
+}
+
+/* 8. PJ NIRWANDA */
+.big-profile-card.pj-nirwanda-profile { 
+    background: linear-gradient(135deg, #D30000 0%, #FF2400 80%); 
+    color: white !important; 
+}
+
+/* --- OVERRIDE WARNA TEXT UNTUK BACKGROUND GELAP/WARNA --- */
+/* Kecuali PJ Leni, semua role di atas backgroundnya gelap/vibrant, jadi text harus putih */
+.big-profile-card.owner-profile .info-label, .big-profile-card.owner-profile .info-val, .big-profile-card.owner-profile #p-nim,
+.big-profile-card.ketua-profile .info-label, .big-profile-card.ketua-profile .info-val, .big-profile-card.ketua-profile #p-nim,
+.big-profile-card.wakil1-profile .info-label, .big-profile-card.wakil1-profile .info-val, .big-profile-card.wakil1-profile #p-nim,
+.big-profile-card.wakil2-profile .info-label, .big-profile-card.wakil2-profile .info-val, .big-profile-card.wakil2-profile #p-nim,
+.big-profile-card.wakil-if2-profile .info-label, .big-profile-card.wakil-if2-profile .info-val, .big-profile-card.wakil-if2-profile #p-nim,
+.big-profile-card.keamanan-profile .info-label, .big-profile-card.keamanan-profile .info-val, .big-profile-card.keamanan-profile #p-nim,
+.big-profile-card.pj-nirwanda-profile .info-label, .big-profile-card.pj-nirwanda-profile .info-val, .big-profile-card.pj-nirwanda-profile #p-nim {
+    color: #e0f2fe !important; 
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
 
         .owner-role {
             font-size: 12px; background: #ffd700; color: #b45309; padding: 2px 10px; border-radius: 10px;
@@ -1276,9 +1336,11 @@
         }
     });
 
-    function openProfile(s) {
+ function openProfile(s) {
         currentProfile = s;
         if(!isMuted) bgmAudio.volume = 0.2;
+        
+        // Set Data Text
         document.getElementById('p-avatar').innerText = getInitials(s.name);
         document.getElementById('p-name').innerText = s.name;
         document.getElementById('p-nim').innerText = s.nim;
@@ -1287,6 +1349,7 @@
         document.getElementById('p-dob').innerText = s.dob;
         document.getElementById('p-dospem').innerText = s.dospem;
         
+        // Logika Tombol Edit DOB
         const hasEdited = localStorage.getItem(`dob_edited_${s.nim}`);
         const dobIcon = document.getElementById('dob-edit-icon');
         if (hasEdited === "true") {
@@ -1297,31 +1360,76 @@
             dobIcon.onclick = initEditDOB;
         }
 
+        // Status Kuliah
         const statusRow = document.getElementById('p-status-row');
         if(s.status) { document.getElementById('p-status-val').innerText = s.status; statusRow.style.display = 'flex'; } else { statusRow.style.display = 'none'; }
         
+        // --- LOGIKA TEMA WARNA PROFIL (PERBAIKAN) ---
         const profileCard = document.querySelector('.big-profile-card');
         const roleDiv = document.getElementById('p-role');
-        profileCard.className = 'big-profile-card'; roleDiv.className = 'owner-role';
+        
+        // Reset class ke default dulu
+        profileCard.className = 'big-profile-card'; 
+        
+        // Reset style badge role kecil
+        roleDiv.className = 'owner-role';
         roleDiv.style.background = ""; roleDiv.style.color = ""; roleDiv.style.border = "";
 
-        if (s.isOwner) { profileCard.classList.add('owner-profile'); roleDiv.innerText = "Pembuat Web"; roleDiv.style.display = 'inline-block'; } 
+        if (s.isOwner) { 
+            profileCard.classList.add('owner-profile'); 
+            roleDiv.innerText = "Pembuat Web"; 
+            roleDiv.style.display = 'inline-block'; 
+        } 
         else if (s.role) {
-            roleDiv.innerText = s.role; roleDiv.style.display = 'inline-block';
-            if (s.role.includes('Ketua')) { profileCard.classList.add('ketua-profile'); roleDiv.classList.add('ketua-role-tag'); } 
-            else if (s.role === "Wakil IF2") { profileCard.classList.add('wakil-if2-profile'); roleDiv.style.background = "#fff"; roleDiv.style.color = "#00c6fb"; } 
-            else if (s.role === "Wakil 1 IF1") { profileCard.classList.add('wakil1-profile'); roleDiv.style.background = "#fff"; roleDiv.style.color = "#8e44ad"; } 
-            else if (s.role === "Wakil 2 IF1") { profileCard.classList.add('wakil2-profile'); roleDiv.style.background = "#fff"; roleDiv.style.color = "#e67e22"; } 
-            else if (s.role === "Keamanan IF1") { profileCard.classList.add('keamanan-profile'); roleDiv.style.background = "#000"; roleDiv.style.color = "#ff0000"; roleDiv.style.border = "1px solid red"; } 
+            roleDiv.innerText = s.role; 
+            roleDiv.style.display = 'inline-block';
+            
+            // Cek string role untuk menerapkan tema
+            if (s.role.includes('Ketua')) { 
+                profileCard.classList.add('ketua-profile'); 
+                roleDiv.classList.add('ketua-role-tag'); 
+            } 
+            else if (s.role === "Wakil IF2") { 
+                profileCard.classList.add('wakil-if2-profile'); 
+                roleDiv.style.background = "#fff"; roleDiv.style.color = "#00c6fb"; 
+            } 
+            else if (s.role === "Wakil 1 IF1") { 
+                profileCard.classList.add('wakil1-profile'); 
+                roleDiv.style.background = "#fff"; roleDiv.style.color = "#8e44ad"; 
+            } 
+            else if (s.role === "Wakil 2 IF1") { 
+                profileCard.classList.add('wakil2-profile'); 
+                roleDiv.style.background = "#fff"; roleDiv.style.color = "#e67e22"; 
+            } 
+            else if (s.role === "Keamanan IF1") { 
+                profileCard.classList.add('keamanan-profile'); 
+                roleDiv.style.background = "#000"; roleDiv.style.color = "#ff0000"; roleDiv.style.border = "1px solid red"; 
+            } 
             else if (s.role === "PJ Matkul") {
-                if(s.name.includes("Leni")) { profileCard.classList.add('pj-leni-profile'); roleDiv.style.background = "#ff6f91"; roleDiv.style.color = "#fff"; } 
-                else { profileCard.classList.add('pj-nirwanda-profile'); roleDiv.style.background = "#fff"; roleDiv.style.color = "#800020"; }
+                if(s.name.includes("Leni")) { 
+                    profileCard.classList.add('pj-leni-profile'); 
+                    roleDiv.style.background = "#ff6f91"; roleDiv.style.color = "#fff"; 
+                } 
+                else { 
+                    // Asumsi PJ Nirwanda
+                    profileCard.classList.add('pj-nirwanda-profile'); 
+                    roleDiv.style.background = "#fff"; roleDiv.style.color = "#800020"; 
+                }
             }
-        } else { roleDiv.style.display = 'none'; }
+        } else { 
+            // Mahasiswa Biasa (Tanpa Role)
+            roleDiv.style.display = 'none'; 
+        }
 
         document.getElementById('daily-quote').innerText = `"${quotes[Math.floor(Math.random()*quotes.length)]}"`;
+        
+        // Animasi Buka
         document.getElementById('main-view').style.opacity = '0';
-        setTimeout(() => { document.getElementById('main-view').style.display = 'none'; document.getElementById('profile-view').style.display = 'block'; setTimeout(() => document.getElementById('profile-view').style.opacity = '1', 50); }, 300);
+        setTimeout(() => { 
+            document.getElementById('main-view').style.display = 'none'; 
+            document.getElementById('profile-view').style.display = 'block'; 
+            setTimeout(() => document.getElementById('profile-view').style.opacity = '1', 50); 
+        }, 300);
     }
 
     function closeProfile() {
