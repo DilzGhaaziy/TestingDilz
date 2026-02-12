@@ -1539,7 +1539,7 @@ async function finalUpdateIPK(fixedVal) {
             localStorage.setItem(`ipk_val_sem${editingSem}_${currentProfile.nim}`, fixedVal);
             localStorage.setItem(`ipk_edited_sem${editingSem}_${currentProfile.nim}`, "true");
             
-            alert(`IPK Semester ${editingSem} berhasil disimpan ke Database!`);
+            alert(`IPK Semester ${editingSem} berhasil disimpan ke Database!<br>Silahkan Restart Web.`);
             closeIpkInputModal(); 
             openIPKModal();
         } else { 
