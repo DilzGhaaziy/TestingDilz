@@ -1527,8 +1527,8 @@ async function finalUpdateIPK(fixedVal) {
                 nim: currentProfile.nim, 
                 semester: editingSem, 
                 newIpk: fixedVal, 
-                repoOwner: DilzGhaaziy, 
-                repoName: TestingDilz 
+                repoOwner: REPO_CONFIG.owner, 
+                repoName: REPO_CONFIG.name 
             })
         });
         
@@ -1706,7 +1706,7 @@ async function finalUpdateIPK(fixedVal) {
         try {
             const response = await fetch('/api/update-dob', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nim: currentProfile.nim, newDOB: selectedDobValue, repoOwner: DilzGhaaziy, repoName: TestingDilz })
+                body: JSON.stringify({ nim: currentProfile.nim, newDOB: selectedDobValue, repoOwner: REPO_CONFIG.owner, repoName: REPO_CONFIG.name })
             });
             const result = await response.json();
             if (response.ok) {
